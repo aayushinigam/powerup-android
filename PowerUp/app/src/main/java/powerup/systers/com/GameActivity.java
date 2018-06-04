@@ -15,7 +15,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.text.method.ScrollingMovementMethod;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -31,7 +30,6 @@ import powerup.systers.com.datamodel.Answer;
 import powerup.systers.com.datamodel.Question;
 import powerup.systers.com.datamodel.Scenario;
 import powerup.systers.com.datamodel.SessionHistory;
-import powerup.systers.com.db.AbstractDbAdapter;
 import powerup.systers.com.db.DatabaseHandler;
 import powerup.systers.com.minesweeper.MinesweeperGameActivity;
 import powerup.systers.com.minesweeper.MinesweeperSessionManager;
@@ -65,8 +63,6 @@ public class GameActivity extends Activity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        mDbHandler = new DatabaseHandler(this);
-        Log.e("GAMEACTIVITY","SCENARIO IS " + mDbHandler.getScenario().getScenarioName());
         new ScenarioOverActivity(this).saveActivityOpenedStatus(false);
         context = GameActivity.this;
         if (new MinesweeperSessionManager(this).isMinesweeperOpened()) {
@@ -213,6 +209,7 @@ public class GameActivity extends Activity {
                             }
                             updatePoints(position);
                             getmDbHandler().setCompletedScenario(scene.getId());
+                            getmDbHandler().setUnlockedScenario(scene.getNextScenarioID());
                             updateScenario(0);
                         }
                     }

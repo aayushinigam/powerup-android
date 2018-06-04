@@ -30,19 +30,12 @@ public class VocabMatchEndActivity extends AppCompatActivity {
         scoreView.setText(""+score);
         correctView.setText(""+correctAnswers);
         wrongView.setText(""+wrongAnswers);
-        //CHANGED FOR HANDLING VOCAB MATCH
-        //if(new VocabMatchSessionManager(this).isBackPressed()){
-           // DatabaseHandler dbHandler = new DatabaseHandler(this);
-            //dbHandler.setSessionId(dbHandler.getScenarioFromID(7).getScenarioName());
-        //}
     }
 
     public void continuePressed(View view){
         VocabMatchSessionManager session = new VocabMatchSessionManager(this);
-        //CHANGED FOR HANDLING VOCAB MATCH
         DatabaseHandler dbHandler = new DatabaseHandler(this);
-        dbHandler.setCompletedScenario(6);
-        dbHandler.setSessionId(dbHandler.getScenarioFromID(7).getScenarioName());
+        dbHandler.setUnlockedScenario(7); //unlocks Libary scenario
         Intent intent = new Intent(VocabMatchEndActivity.this, ScenarioOverActivity.class);
         session.saveVocabMatchOpenedStatus(false);
         finish();

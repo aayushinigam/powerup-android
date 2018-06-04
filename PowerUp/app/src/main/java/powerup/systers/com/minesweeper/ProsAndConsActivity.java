@@ -21,6 +21,8 @@ public class ProsAndConsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        DatabaseHandler dbHandler = new DatabaseHandler(this);
+        dbHandler.setUnlockedScenario(6); //unlocks School Scenario
         setContentView(R.layout.minesweeper_pros_cons);
         proOne = (TextView) findViewById(R.id.pro_one);
         proTwo = (TextView) findViewById(R.id.pro_two);
@@ -29,13 +31,6 @@ public class ProsAndConsActivity extends AppCompatActivity {
         MinesweeperSessionManager sessionManager = new MinesweeperSessionManager(this);
         completedRounds = sessionManager.getCompletedRounds();
         setTexts();
-
-        //CHANGED FOR VHANDLING OF MINI GAME
-       /* if(new MinesweeperSessionManager(this).isBackPressed()){
-            DatabaseHandler dbHandler = new DatabaseHandler(this);
-            dbHandler.setCompletedScenario(5);
-            dbHandler.setSessionId(dbHandler.getScenarioFromID(6).getScenarioName());
-        } */
     }
 
     public void setTexts(){
@@ -54,10 +49,6 @@ public class ProsAndConsActivity extends AppCompatActivity {
             overridePendingTransition(R.animator.fade_in_custom, R.animator.fade_out_custom);
         } else {
             new MinesweeperSessionManager(this).saveMinesweeperOpenedStatus(false);//marks minesweeper game as finished
-            //CHANGED FOR VHANDLING OF MINI GAME
-            DatabaseHandler dbHandler = new DatabaseHandler(this);
-            dbHandler.setCompletedScenario(5);
-            dbHandler.setSessionId(dbHandler.getScenarioFromID(6).getScenarioName());
             Intent intent = new Intent(ProsAndConsActivity.this, ScenarioOverActivity.class);
             intent.putExtra(String.valueOf(R.string.scene), PowerUpUtils.MINESWEEP_PREVIOUS_SCENARIO);
             startActivity(intent);

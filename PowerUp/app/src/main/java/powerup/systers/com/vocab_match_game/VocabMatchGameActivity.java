@@ -25,7 +25,6 @@ import powerup.systers.com.R;
 import powerup.systers.com.datamodel.SessionHistory;
 import powerup.systers.com.powerup.PowerUpUtils;
 
-
 public class VocabMatchGameActivity extends AppCompatActivity {
 
     public VocabBoardTextView tv1, tv2, tv3;
@@ -274,9 +273,6 @@ public class VocabMatchGameActivity extends AppCompatActivity {
         isDisrupted = true;
         mediaPlayerPlus.stop();
         mediaPlayerNegative.stop();
-
-        //CHANGED FOR HANDLING MINI GAMES
-        new VocabMatchSessionManager(this).saveBackPressedStatus(true);
         startActivity(new Intent(VocabMatchGameActivity.this, MapActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
         finish();
     }

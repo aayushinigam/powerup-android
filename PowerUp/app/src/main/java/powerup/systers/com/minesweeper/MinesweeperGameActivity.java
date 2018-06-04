@@ -256,10 +256,6 @@ public class MinesweeperGameActivity extends AppCompatActivity {
     public void onBackPressed(){
         // The flag FLAG_ACTIVITY_CLEAR_TOP checks if an instance of the activity is present and it
         // clears the activities that were created after the found instance of the required activity
-
-        //CHANGED FOR VHANDLING OF MINI GAME
-        new MinesweeperSessionManager(this).saveBackPressedStatus(true);
-
         startActivity(new Intent(MinesweeperGameActivity.this, MapActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
         finish();
     }
