@@ -8,6 +8,7 @@ import android.widget.ImageView;
 
 import powerup.systers.com.MapActivity;
 import powerup.systers.com.R;
+import powerup.systers.com.db.DatabaseHandler;
 import powerup.systers.com.powerup.PowerUpUtils;
 
 public class VocabMatchTutorials extends AppCompatActivity {
@@ -17,6 +18,9 @@ public class VocabMatchTutorials extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //CHANGED FOR HANDLING VOCAB MATCH
+        DatabaseHandler dbHandler = new DatabaseHandler(this);
+        dbHandler.resetCompleted(6);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_vocab_match_tutorials);
         tutorialView = (ImageView) findViewById(R.id.tut);

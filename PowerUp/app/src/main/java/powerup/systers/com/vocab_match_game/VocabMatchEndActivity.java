@@ -9,6 +9,7 @@ import android.widget.TextView;
 import powerup.systers.com.MapActivity;
 import powerup.systers.com.R;
 import powerup.systers.com.ScenarioOverActivity;
+import powerup.systers.com.db.DatabaseHandler;
 import powerup.systers.com.powerup.PowerUpUtils;
 
 public class VocabMatchEndActivity extends AppCompatActivity {
@@ -29,10 +30,19 @@ public class VocabMatchEndActivity extends AppCompatActivity {
         scoreView.setText(""+score);
         correctView.setText(""+correctAnswers);
         wrongView.setText(""+wrongAnswers);
+        //CHANGED FOR HANDLING VOCAB MATCH
+        //if(new VocabMatchSessionManager(this).isBackPressed()){
+           // DatabaseHandler dbHandler = new DatabaseHandler(this);
+            //dbHandler.setSessionId(dbHandler.getScenarioFromID(7).getScenarioName());
+        //}
     }
 
     public void continuePressed(View view){
         VocabMatchSessionManager session = new VocabMatchSessionManager(this);
+        //CHANGED FOR HANDLING VOCAB MATCH
+        DatabaseHandler dbHandler = new DatabaseHandler(this);
+        dbHandler.setCompletedScenario(6);
+        dbHandler.setSessionId(dbHandler.getScenarioFromID(7).getScenarioName());
         Intent intent = new Intent(VocabMatchEndActivity.this, ScenarioOverActivity.class);
         session.saveVocabMatchOpenedStatus(false);
         finish();

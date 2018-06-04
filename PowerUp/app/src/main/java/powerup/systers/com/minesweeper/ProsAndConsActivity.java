@@ -9,6 +9,7 @@ import android.widget.TextView;
 import powerup.systers.com.MapActivity;
 import powerup.systers.com.R;
 import powerup.systers.com.ScenarioOverActivity;
+import powerup.systers.com.db.DatabaseHandler;
 import powerup.systers.com.powerup.PowerUpUtils;
 
 public class ProsAndConsActivity extends AppCompatActivity {
@@ -28,6 +29,13 @@ public class ProsAndConsActivity extends AppCompatActivity {
         MinesweeperSessionManager sessionManager = new MinesweeperSessionManager(this);
         completedRounds = sessionManager.getCompletedRounds();
         setTexts();
+
+        //CHANGED FOR VHANDLING OF MINI GAME
+       /* if(new MinesweeperSessionManager(this).isBackPressed()){
+            DatabaseHandler dbHandler = new DatabaseHandler(this);
+            dbHandler.setCompletedScenario(5);
+            dbHandler.setSessionId(dbHandler.getScenarioFromID(6).getScenarioName());
+        } */
     }
 
     public void setTexts(){
@@ -45,7 +53,11 @@ public class ProsAndConsActivity extends AppCompatActivity {
             startActivity(new Intent(ProsAndConsActivity.this, MinesweeperGameActivity.class).putExtra(PowerUpUtils.CALLED_BY, false));
             overridePendingTransition(R.animator.fade_in_custom, R.animator.fade_out_custom);
         } else {
-            new MinesweeperSessionManager(this).saveMinesweeperOpenedStatus(false); //marks minesweeper game as finished
+            new MinesweeperSessionManager(this).saveMinesweeperOpenedStatus(false);//marks minesweeper game as finished
+            //CHANGED FOR VHANDLING OF MINI GAME
+            DatabaseHandler dbHandler = new DatabaseHandler(this);
+            dbHandler.setCompletedScenario(5);
+            dbHandler.setSessionId(dbHandler.getScenarioFromID(6).getScenarioName());
             Intent intent = new Intent(ProsAndConsActivity.this, ScenarioOverActivity.class);
             intent.putExtra(String.valueOf(R.string.scene), PowerUpUtils.MINESWEEP_PREVIOUS_SCENARIO);
             startActivity(intent);

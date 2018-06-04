@@ -14,6 +14,7 @@ public class MinesweeperSessionManager {
     private final String PREF_NAME = "MINESWEEPER_PREFERENCE";
     private final int PRIVATE_MODE = 0;
     private final String GAME_OPENED = "IS_MINESWEEPER_OPENED";
+    private final String BACK_PRESSED = "IS_BACK_PRESSED";
 
     SharedPreferences pref;
     Context context;
@@ -56,9 +57,20 @@ public class MinesweeperSessionManager {
         return pref.getBoolean(GAME_OPENED, false);
     }
 
+    //CHANGED FOR VHANDLING OF MINI GAME
+    public boolean isBackPressed(){
+        return pref.getBoolean(BACK_PRESSED,false);
+    }
+
     public void saveMinesweeperOpenedStatus(boolean isOpened) {
         editor.putBoolean(GAME_OPENED, isOpened);
         editor.clear();
+        editor.commit();
+    }
+
+    //CHANGED FOR VHANDLING OF MINI GAME
+    public void saveBackPressedStatus(boolean isBackPressed){
+        editor.putBoolean(BACK_PRESSED,isBackPressed);
         editor.commit();
     }
 }

@@ -8,6 +8,7 @@ import android.widget.ImageView;
 
 import powerup.systers.com.MapActivity;
 import powerup.systers.com.R;
+import powerup.systers.com.db.DatabaseHandler;
 import powerup.systers.com.powerup.PowerUpUtils;
 
 public class MinesweeperTutorials extends AppCompatActivity {
@@ -17,6 +18,10 @@ public class MinesweeperTutorials extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //CHANGED FOR VHANDLING OF MINI GAME
+        DatabaseHandler dbHandler = new DatabaseHandler(this);
+        dbHandler.resetCompleted(5);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_minesweeper_tutorials);
         tutorialView = (ImageView) findViewById(R.id.tut);
