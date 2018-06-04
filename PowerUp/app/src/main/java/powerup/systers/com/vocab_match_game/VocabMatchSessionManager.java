@@ -13,6 +13,7 @@ public class VocabMatchSessionManager {
     static final String CURR_SCORE = "currScore";
     static final String CURR_TILE = "currTile";
     private final int PRIVATE_MODE = 0;
+    private final String BACK_PRESSED = "IS_BACK_PRESSED";
 
     SharedPreferences pref;
     Context context;
@@ -34,10 +35,16 @@ public class VocabMatchSessionManager {
     public boolean isVocabMatchOpened() {
         return pref.getBoolean(GAME_OPENED, false);
     }
+    public boolean isBackPressed(){return pref.getBoolean(BACK_PRESSED,false);}
 
     public void saveVocabMatchOpenedStatus(boolean isOpened) {
         editor.putBoolean(GAME_OPENED, isOpened);
         editor.clear();
+        editor.commit();
+    }
+
+    public  void saveBackPressedStatus(boolean isBackPressed){
+        editor.putBoolean(BACK_PRESSED,isBackPressed);
         editor.commit();
     }
 }

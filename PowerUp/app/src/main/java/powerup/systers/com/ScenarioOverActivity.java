@@ -24,20 +24,15 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import com.akexorcist.roundcornerprogressbar.IconRoundCornerProgressBar;
 
 import powerup.systers.com.datamodel.Scenario;
-import powerup.systers.com.datamodel.Score;
 import powerup.systers.com.datamodel.SessionHistory;
 import powerup.systers.com.db.DatabaseHandler;
 import powerup.systers.com.powerup.PowerUpUtils;
 
-import static powerup.systers.com.R.string.scenario_description;
-import static powerup.systers.com.R.string.scene;
 
 public class ScenarioOverActivity extends AppCompatActivity {
 
@@ -68,9 +63,10 @@ public class ScenarioOverActivity extends AppCompatActivity {
         getmDbHandler().open();
         setContentView(R.layout.activity_scenario_over);
         scene = getmDbHandler().getScenario();
-        Scenario prevScene = getmDbHandler().getScenarioFromID(SessionHistory.prevSessionID); //Fetching Scenario
+        final Scenario prevScene = getmDbHandler().getScenarioFromID(SessionHistory.prevSessionID); //Fetching Scenario
         scenarioActivityDone = 1;
-        if(!new ScenarioOverActivity(this).isActivityOpened()){
+        //If not launched from map then only dialogMaker() is called
+        if(!new ScenarioOverActivity(this).isActivityOpened() && (!(getIntent().getExtras()!=null && PowerUpUtils.MAP.equals(getIntent().getExtras().getString(PowerUpUtils.SOURCE))))){
             dialogMaker();
         }
         ImageView replayButton = (ImageView) findViewById(R.id.replayButton);
@@ -86,9 +82,11 @@ public class ScenarioOverActivity extends AppCompatActivity {
         });
 
         //Initializing and setting Text for currentScenarioName
-        TextView currentScenarioName = (TextView) findViewById(R.id.currentScenarioName);
-        currentScenarioName.setText(getResources().
-                getString(R.string.current_scenario_name,prevScene.getScenarioName()));
+        final TextView currentScenarioName = (TextView) findViewById(R.id.currentScenarioName);
+        if(getIntent().getExtras() !=null && PowerUpUtils.MAP.equals(getIntent().getExtras().getString(PowerUpUtils.SOURCE)) && getIntent().getStringExtra(PowerUpUtils.SCENARIO_NAME) != null)
+            currentScenarioName.setText(getResources().getString(R.string.current_scenario_name,getIntent().getStringExtra(PowerUpUtils.SCENARIO_NAME)));
+        else
+            currentScenarioName.setText(getResources().getString(R.string.current_scenario_name,prevScene.getScenarioName()));
         TextView karmaPoints = (TextView) findViewById(R.id.karmaPoints);
         
         karmaPoints.setText(String.valueOf(SessionHistory.totalPoints));
@@ -114,7 +112,36 @@ public class ScenarioOverActivity extends AppCompatActivity {
         replayButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SessionHistory.currSessionID = SessionHistory.prevSessionID;
+                if(getIntent().getExtras() !=null && PowerUpUtils.MAP.equals(getIntent().getExtras().getString(PowerUpUtils.SOURCE)) && getIntent().getStringExtra(PowerUpUtils.SCENARIO_NAME) != null) {
+                    String scenario = getIntent().getStringExtra(PowerUpUtils.SCENARIO_NAME);
+                    int id;
+                    switch (scenario) {
+                        case "Home":
+                            id = 4;
+                            SessionHistory.sceneHomeIsReplayed = true;
+                            break;
+                        case "School":
+                            id = 5;
+                            SessionHistory.sceneSchoolIsReplayed = true;
+                            break;
+                        case "Hospital":
+                            id = 6;
+                            SessionHistory.sceneHospitalIsReplayed = true;
+                            break;
+                        case "Library":
+                            id = 7;
+                            SessionHistory.sceneLibraryIsReplayed = true;
+                            break;
+                        default:
+                            id = 4;
+                            break;
+                        }
+                    SessionHistory.currSessionID = id;
+                    } else {
+                    SessionHistory.currSessionID = SessionHistory.prevSessionID;
+                    scenarioActivityDone = 0;
+                    }                //Check that reducing points does not lead to negetive value
+                if(SessionHistory.totalPoints - SessionHistory.currScenePoints >= 0)
                 SessionHistory.totalPoints -= SessionHistory.currScenePoints;
                 SessionHistory.currScenePoints = 0;
                 scenarioActivityDone = 0;

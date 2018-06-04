@@ -1,13 +1,14 @@
 package powerup.systers.com.sink_to_swim_game;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
 
 import powerup.systers.com.MapActivity;
 import powerup.systers.com.R;
+import powerup.systers.com.db.DatabaseHandler;
 import powerup.systers.com.powerup.PowerUpUtils;
 
 public class SinkToSwimTutorials extends AppCompatActivity {
@@ -19,6 +20,7 @@ public class SinkToSwimTutorials extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        new DatabaseHandler(this).setUnlockedScenario(7);
         setContentView(R.layout.activity_sink_to_swim_tutorials);
         tutorialView = (ImageView) findViewById(R.id.tut);
         startButton = (ImageView) findViewById(R.id.start_button);

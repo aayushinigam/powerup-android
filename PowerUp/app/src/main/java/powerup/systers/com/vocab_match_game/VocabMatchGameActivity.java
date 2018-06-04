@@ -8,10 +8,9 @@ import android.content.ClipData;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Build;
-import android.os.Handler;
-import android.provider.MediaStore;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.view.DragEvent;
 import android.view.MotionEvent;
@@ -23,10 +22,8 @@ import java.util.Random;
 
 import powerup.systers.com.MapActivity;
 import powerup.systers.com.R;
-import powerup.systers.com.powerup.PowerUpUtils;
-import powerup.systers.com.vocab_match_game.VocabMatchSessionManager;
-import powerup.systers.com.sink_to_swim_game.SinkToSwimGame;
 import powerup.systers.com.datamodel.SessionHistory;
+import powerup.systers.com.powerup.PowerUpUtils;
 
 public class VocabMatchGameActivity extends AppCompatActivity {
 
@@ -36,6 +33,7 @@ public class VocabMatchGameActivity extends AppCompatActivity {
     public TextView scoreView;
     public MediaPlayer mediaPlayerPlus;
     public MediaPlayer mediaPlayerNegative;
+    private boolean isDisrupted = false;
     Random r;
 
     @Override
@@ -118,6 +116,9 @@ public class VocabMatchGameActivity extends AppCompatActivity {
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     public void startNewTile(final int position, final VocabTileImageView imageview) {
+        //if Back/Home is pressed, return from function
+        if(isDisrupted == true)
+            return;
 
         if (latestTile < PowerUpUtils.VOCAB_TILES_IMAGES.length) {
             imageview.setImageDrawable(getResources().getDrawable(PowerUpUtils.VOCAB_TILES_IMAGES[latestTile]));
@@ -135,6 +136,10 @@ public class VocabMatchGameActivity extends AppCompatActivity {
             @Override
             public void onAnimationEnd(Animator animation) {
 
+                //if Home/Back is pressed ,return from function so that already executing function
+                //calls of startNewTile do not execute this function.
+                if(isDisrupted == true)
+                    return;
                 imageview.setLayerType(View.LAYER_TYPE_NONE, null);
                 imageview.setVisibility(View.GONE);
                 final TextView boardView = getBoardFromPosition(imageview.getPosition());
@@ -265,7 +270,19 @@ public class VocabMatchGameActivity extends AppCompatActivity {
     public void onBackPressed(){
         // The flag FLAG_ACTIVITY_CLEAR_TOP checks if an instance of the activity is present and it
         // clears the activities that were created after the found instance of the required activity
+        isDisrupted = true;
+        mediaPlayerPlus.stop();
+        mediaPlayerNegative.stop();
         startActivity(new Intent(VocabMatchGameActivity.this, MapActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
         finish();
+    }
+
+    //to handle issues when Home button is pressed
+    @Override
+    protected void onStop() {
+        isDisrupted = true;
+        mediaPlayerNegative.stop();
+        mediaPlayerPlus.stop();
+        super.onStop();
     }
 }

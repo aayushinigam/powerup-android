@@ -12,18 +12,16 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
-import android.view.Gravity;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Toast;
 
+import powerup.systers.com.datamodel.SessionHistory;
 import powerup.systers.com.minesweeper.MinesweeperSessionManager;
 import powerup.systers.com.sink_to_swim_game.SinkToSwimSessionManager;
 import powerup.systers.com.vocab_match_game.VocabMatchSessionManager;
@@ -81,6 +79,7 @@ public class StartActivity extends Activity {
                     Intent intent = new Intent(getApplicationContext(),AvatarRoomActivity.class);
                     startActivity(intent);
                 }
+                SessionHistory.hasPreviouslyCustomized = false;
             }
         });
 
@@ -119,15 +118,6 @@ public class StartActivity extends Activity {
             }
         });
 
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        hasPreviouslyStarted = preferences.getBoolean(getString(R.string.preferences_has_previously_started), false);
-        if (hasPreviouslyStarted) {
-            startButton.setText(getString(R.string.resume_text));
-        }
     }
     @Override
     public void onBackPressed() {

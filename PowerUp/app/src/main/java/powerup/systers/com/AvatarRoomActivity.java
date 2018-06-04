@@ -13,8 +13,6 @@ import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.ImageView;
 
-import java.util.Random;
-
 import powerup.systers.com.datamodel.SessionHistory;
 import powerup.systers.com.db.DatabaseHandler;
 
@@ -53,16 +51,12 @@ public class AvatarRoomActivity extends Activity {
         final ImageView hairLeft = (ImageView) findViewById(R.id.hair_left);
         ImageView hairRight = (ImageView) findViewById(R.id.hair_right);
         ImageView continueButton = (ImageView) findViewById(R.id.continueButtonAvatar);
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(AvatarRoomActivity.this);
-        boolean hasPreviouslyCustomized = prefs.getBoolean(getString(R.string.preferences_has_previously_customized), false);
-        if (!hasPreviouslyCustomized) {
-            SharedPreferences.Editor edit = prefs.edit();
-            edit.putBoolean(getString(R.string.preferences_has_previously_customized), Boolean.TRUE);
-            edit.apply();
+        if (!SessionHistory.hasPreviouslyCustomized) {
             eye=1;
             skin=1;
             hair=1;
             cloth=1;
+            SessionHistory.hasPreviouslyCustomized = true;
         } else {
             eye=getmDbHandler().getAvatarEye();
             skin=getmDbHandler().getAvatarSkin();
@@ -283,9 +277,14 @@ public class AvatarRoomActivity extends Activity {
                 getmDbHandler().setPurchasedClothes(cloth);
                 getmDbHandler().updateComplete();//set all the complete fields back to 0
                 getmDbHandler().updateReplayed();//set all the replayed fields back to 0
+                getmDbHandler().updateLock(); //set all scenarios back to locked
                 SessionHistory.totalPoints = 0;    //reset the points stored
                 SessionHistory.currSessionID = 1;
                 SessionHistory.currScenePoints = 0;
+                SessionHistory.sceneHomeIsReplayed = false;
+                SessionHistory.sceneSchoolIsReplayed = false;
+                SessionHistory.sceneHospitalIsReplayed = false;
+                SessionHistory.sceneLibraryIsReplayed = false;
                 finish();
                 startActivity(new Intent(AvatarRoomActivity.this, FinalAvatarActivity.class));
                 overridePendingTransition(R.animator.fade_in_custom, R.animator.fade_out_custom);

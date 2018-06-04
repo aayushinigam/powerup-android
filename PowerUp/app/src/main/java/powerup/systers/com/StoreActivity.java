@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -17,12 +16,9 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +27,8 @@ import powerup.systers.com.datamodel.SessionHistory;
 import powerup.systers.com.datamodel.StoreItem;
 import powerup.systers.com.db.DatabaseHandler;
 import powerup.systers.com.powerup.PowerUpUtils;
+
+import static powerup.systers.com.powerup.PowerUpUtils.MAX_ELEMENTS_PER_SCREEN;
 
 
 public class StoreActivity extends AppCompatActivity {
@@ -47,7 +45,6 @@ public class StoreActivity extends AppCompatActivity {
     private DatabaseHandler mDbHandler;
     java.lang.reflect.Field photoNameField;
     R.drawable ourRID;
-    long selectedItemId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,7 +112,7 @@ public class StoreActivity extends AppCompatActivity {
             public void onClick(View v) {
                 currentPage = 0;
                 storeItemTypeindex = 0;
-                adapter.refresh(allDataSet.get(storeItemTypeindex).subList(0, 6));
+                adapter.refresh(allDataSet.get(storeItemTypeindex).subList(0, MAX_ELEMENTS_PER_SCREEN));
                 setArrows();
             }
         });
@@ -125,7 +122,7 @@ public class StoreActivity extends AppCompatActivity {
             public void onClick(View v) {
                 currentPage = 0;
                 storeItemTypeindex = 1;
-                adapter.refresh(allDataSet.get(storeItemTypeindex).subList(0, PowerUpUtils.CLOTHES_IMAGES.length%6));
+                adapter.refresh(allDataSet.get(storeItemTypeindex).subList(0, MAX_ELEMENTS_PER_SCREEN));
                 setArrows();
             }
         });
@@ -135,7 +132,7 @@ public class StoreActivity extends AppCompatActivity {
             public void onClick(View v) {
                 currentPage = 0;
                 storeItemTypeindex = 2;
-                adapter.refresh(allDataSet.get(storeItemTypeindex).subList(0, PowerUpUtils.ACCESSORIES_IMAGES.length%6));
+                adapter.refresh(allDataSet.get(storeItemTypeindex).subList(0, MAX_ELEMENTS_PER_SCREEN));
                 setArrows();
             }
         });
@@ -145,11 +142,11 @@ public class StoreActivity extends AppCompatActivity {
             public void onClick(View v) {
                 currentPage--;
                 setArrows();
-                if (currentPage * 6 < allDataSet.get(storeItemTypeindex).size()) {
-                    if (allDataSet.get(storeItemTypeindex).size() >= currentPage * 6 + 6) {
-                        adapter.refresh(allDataSet.get(storeItemTypeindex).subList(currentPage * 6, currentPage * 6 + 6));
+                if (currentPage * MAX_ELEMENTS_PER_SCREEN < allDataSet.get(storeItemTypeindex).size()) {
+                    if (allDataSet.get(storeItemTypeindex).size() >= currentPage * MAX_ELEMENTS_PER_SCREEN + MAX_ELEMENTS_PER_SCREEN) {
+                        adapter.refresh(allDataSet.get(storeItemTypeindex).subList(currentPage * MAX_ELEMENTS_PER_SCREEN, currentPage * MAX_ELEMENTS_PER_SCREEN + MAX_ELEMENTS_PER_SCREEN));
                     } else {
-                        adapter.refresh(allDataSet.get(storeItemTypeindex).subList(currentPage * 6, allDataSet.get(storeItemTypeindex).size()));
+                        adapter.refresh(allDataSet.get(storeItemTypeindex).subList(currentPage * MAX_ELEMENTS_PER_SCREEN, allDataSet.get(storeItemTypeindex).size()));
                     }
                 }
             }
@@ -160,17 +157,17 @@ public class StoreActivity extends AppCompatActivity {
             public void onClick(View v) {
                 currentPage++;
                 setArrows();
-                if (allDataSet.get(storeItemTypeindex).size() >= currentPage * 6 + 6) {
-                    adapter.refresh(allDataSet.get(storeItemTypeindex).subList(currentPage * 6, currentPage * 6 + 6));
+                if (allDataSet.get(storeItemTypeindex).size() >= currentPage * MAX_ELEMENTS_PER_SCREEN + MAX_ELEMENTS_PER_SCREEN) {
+                    adapter.refresh(allDataSet.get(storeItemTypeindex).subList(currentPage * MAX_ELEMENTS_PER_SCREEN, currentPage * MAX_ELEMENTS_PER_SCREEN + MAX_ELEMENTS_PER_SCREEN));
                 } else {
-                    adapter.refresh(allDataSet.get(storeItemTypeindex).subList(currentPage * 6, allDataSet.get(storeItemTypeindex).size()));
+                    adapter.refresh(allDataSet.get(storeItemTypeindex).subList(currentPage * MAX_ELEMENTS_PER_SCREEN, allDataSet.get(storeItemTypeindex).size()));
                 }
             }
         });
 
         gridView = (GridView) findViewById(R.id.grid_view);
         createDataLists();
-        adapter = new GridAdapter(this, allDataSet.get(0).subList(0, 6));
+        adapter = new GridAdapter(this, allDataSet.get(0).subList(0, MAX_ELEMENTS_PER_SCREEN));
         gridView.setAdapter(adapter);
         setArrows();
     }
@@ -242,7 +239,7 @@ public class StoreActivity extends AppCompatActivity {
     }
 
     public int calculatePosition(int position) {
-        int id = currentPage*6+position;
+        int id = currentPage * MAX_ELEMENTS_PER_SCREEN +position;
         return id;
     }
 
@@ -301,7 +298,6 @@ public class StoreActivity extends AppCompatActivity {
 
                 holder = new ViewHolder(storeItem);
                 storeItem.setTag(holder);
-                selectedItemId = getItemId(calculatePosition(position)+1); //Previously purchased
             } else {
                 holder = (ViewHolder) storeItem.getTag();
             }
@@ -314,7 +310,6 @@ public class StoreActivity extends AppCompatActivity {
                         int index = calculatePosition(position)+1;
                         if (storeItemTypeindex == 0) { //hair
                             setAvatarHair(index);
-                            selectedItemId = getmDbHandler().getAvatarHair(); //hairItem selected
                             if (getmDbHandler().getPurchasedHair(index) == 0){
                                 final int cost = Integer.parseInt(itemPoints.getText().toString());
                                 showConfirmPurchaseDialog(cost, index);
@@ -324,7 +319,6 @@ public class StoreActivity extends AppCompatActivity {
 
                         } else if (storeItemTypeindex == 1) { //clothes
                             setAvatarClothes(index);
-                            selectedItemId = getmDbHandler().getAvatarCloth(); //clothItem selected
                             if (getmDbHandler().getPurchasedClothes(index) == 0){
                                 final int cost = Integer.parseInt(itemPoints.getText().toString());
                                 showConfirmPurchaseDialog(cost, index);
@@ -334,7 +328,6 @@ public class StoreActivity extends AppCompatActivity {
 
                         } else if (storeItemTypeindex == 2) { //accessories
                             setAvatarAccessories(index);
-                            selectedItemId = getmDbHandler().getAvatarAccessory(); //accessoryItem selected
                             if (getmDbHandler().getPurchasedAccessories(index) == 0){
                                 final int cost = Integer.parseInt(itemPoints.getText().toString());
                                 showConfirmPurchaseDialog(cost, index);
@@ -357,7 +350,7 @@ public class StoreActivity extends AppCompatActivity {
                 storeItem.setBackground(getResources().getDrawable(R.drawable.sold_item));
                 storeItem.setEnabled(true);
                 //Testing whether the item matches id (selected)
-                if (selectedItemId == id) {
+                if (getSelectedItemId() == id) {
                     holder.itemImage.setImageResource(R.drawable.store_tick);
                 } else {
                     holder.itemImage.setImageResource(android.R.color.transparent);
@@ -376,6 +369,19 @@ public class StoreActivity extends AppCompatActivity {
             return storeItem;
         }
 
+    }
+
+    private int getSelectedItemId(){
+        switch (storeItemTypeindex) {
+            case 0: //hair
+                return getmDbHandler().getAvatarHair();
+            case 1: //cloth
+                return getmDbHandler().getAvatarCloth();
+            case 2:
+                return getmDbHandler().getAvatarAccessory();
+            default:
+                throw new IllegalArgumentException("Invalid store type index");
+        }
     }
 
     private void showConfirmPurchaseDialog(final int cost, final int index) {
@@ -452,7 +458,7 @@ public class StoreActivity extends AppCompatActivity {
         } else {
             leftArrow.setVisibility(View.VISIBLE);
         }
-        if((currentPage+1) * 6 >= allDataSet.get(storeItemTypeindex).size()){
+        if((currentPage+1) * MAX_ELEMENTS_PER_SCREEN >= allDataSet.get(storeItemTypeindex).size()){
             rightArrow.setVisibility(View.GONE);
         } else {
             rightArrow.setVisibility(View.VISIBLE);

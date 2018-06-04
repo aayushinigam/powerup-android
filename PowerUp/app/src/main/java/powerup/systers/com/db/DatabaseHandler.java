@@ -8,7 +8,9 @@ package powerup.systers.com.db;
 import android.content.Context;
 import android.database.Cursor;
 import android.util.Log;
+
 import java.util.List;
+
 import powerup.systers.com.datamodel.Answer;
 import powerup.systers.com.datamodel.Question;
 import powerup.systers.com.datamodel.Scenario;
@@ -87,6 +89,7 @@ public class DatabaseHandler extends AbstractDbAdapter {
             scene.setCompleted(cursor.getInt(6));
             scene.setNextScenarioID(cursor.getInt(7));
             scene.setReplayed(cursor.getInt(8));
+            scene.setUnlockScenario(cursor.getInt(9));
             return scene;
         }
         cursor.close();
@@ -114,6 +117,7 @@ public class DatabaseHandler extends AbstractDbAdapter {
             scene.setCompleted(cursor.getInt(6));
             scene.setNextScenarioID(cursor.getInt(7));
             scene.setReplayed(cursor.getInt(8));
+            scene.setUnlockScenario(cursor.getInt(9));
             return scene;
         }
         cursor.close();
@@ -443,4 +447,42 @@ public class DatabaseHandler extends AbstractDbAdapter {
                 " WHERE " + PowerUpContract.AvatarEntry.COLUMN_ID + " = 1";
         mDb.execSQL(query);
     }
-}
+    /**
+     * @desc unlocks the scenario with given scenario id
+     * @param id - the id of scenario to be unlocked
+     */
+    public void setUnlockedScenario(int id){
+        String query = "UPDATE " + PowerUpContract.ScenarioEntry.TABLE_NAME
+                + " SET " + PowerUpContract.ScenarioEntry.COLUMN_UNLOCKED + " = 1"
+                + " WHERE " + PowerUpContract.ScenarioEntry.COLUMN_ID + " = " + id;
+        mDb.execSQL(query);
+
+    }
+    /**
+     * @desc Locks te scenario with given scenario id
+     * @param id - the id of scenario to be locked
+     */
+    public void resetUnlocked(int id){
+        String query = "UPDATE " + PowerUpContract.ScenarioEntry.TABLE_NAME
+                + " SET " + PowerUpContract.ScenarioEntry.COLUMN_UNLOCKED + " = 0"
+                + " WHERE " + PowerUpContract.ScenarioEntry.COLUMN_ID + " = " + id;
+        mDb.execSQL(query);
+    }
+    /**
+     * @desc Locks every scenario
+     */
+    public void updateLock(){
+            String query = "UPDATE " + PowerUpContract.ScenarioEntry.TABLE_NAME +
+                    " SET " + PowerUpContract.ScenarioEntry.COLUMN_UNLOCKED + " = 0";
+            mDb.execSQL(query);
+        }
+    /**
+     * @desc Unlocks every scenario
+     */
+    public void updateUnlockEveryScenario(){
+        String query = "UPDATE " + PowerUpContract.ScenarioEntry.TABLE_NAME +
+                " SET " + PowerUpContract.ScenarioEntry.COLUMN_UNLOCKED + " = 1";
+        mDb.execSQL(query);
+    }
+    }
+
